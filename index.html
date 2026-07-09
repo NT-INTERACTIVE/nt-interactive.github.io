@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
+  <title>NT INTERACTIVE</title>
+  <link rel="icon" href="assets/icons/favicon.png" type="image/png">
+  <script>
+    window.ntStartedAt = Date.now();
+    window.ntShell = {
+      dark: false,
+      loaded: false
+    };
+    window.ntShellTiming = {
+      blackFade: 500,
+      blackHold: 500,
+      whiteHold: 500
+    };
+    window.ntRevealSite = () => {
+      if (window.ntShell.dark && window.ntShell.loaded) {
+        document.body.classList.add("is-site-loaded");
+      }
+    };
+    window.ntSiteLoaded = () => {
+      window.ntShell.loaded = true;
+      window.ntRevealSite();
+    };
+  </script>
+  <style>
+    html,
+    body {
+      background: #fff;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    iframe {
+      background: #000;
+      border: 0;
+      display: block;
+      height: 100%;
+      inset: 0;
+      position: fixed;
+      width: 100%;
+      z-index: 0;
+    }
+    .shell-cover {
+      background: #fff;
+      inset: 0;
+      opacity: 1;
+      pointer-events: none;
+      position: fixed;
+      transition:
+        background 500ms ease-out,
+        opacity 500ms ease-out;
+      z-index: 1;
+    }
+    body.is-cover-dark .shell-cover {
+      background: #000;
+    }
+    body.is-site-loaded .shell-cover {
+      opacity: 0;
+    }
+    body::before,
+    body::after {
+      background: #fff;
+      content: "";
+      height: 48px;
+      left: 0;
+      opacity: 0.001;
+      pointer-events: none;
+      position: fixed;
+      right: 0;
+      z-index: 2;
+    }
+    body::before {
+      top: 0;
+    }
+    body::after {
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell-cover" aria-hidden="true"></div>
+  <iframe src="main.html" title="NT INTERACTIVE" onload="ntSiteLoaded()">
+  </iframe>
+  <script>
+    requestAnimationFrame(() => {
+      window.setTimeout(() => {
+        document.body.classList.add("is-cover-dark");
+        window.setTimeout(() => {
+          window.ntShell.dark = true;
+          window.ntRevealSite();
+        }, window.ntShellTiming.blackFade);
+      }, window.ntShellTiming.whiteHold);
+    });
+  </script>
+</body>
+</html>

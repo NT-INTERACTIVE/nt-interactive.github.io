@@ -1,0 +1,1007 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
+  <title>NT INTERACTIVE</title>
+  <link rel="icon" href="assets/icons/favicon.png" type="image/png">
+  <style>
+    @font-face {
+      font-display: swap;
+      font-family: "Geo";
+      font-style: normal;
+      font-weight: 400;
+      src: url("assets/fonts/geo/Geo-Regular.ttf") format("truetype");
+    }
+    :root {
+      --stroke-color: #000;
+      --body-size: 16px;
+      --chrome-side: 18px;
+      --header-title-size: 30px;
+      --logo-title-size: 32px;
+      --menu-text-size: 23px;
+      --menu-width: 188px;
+      --menu-size: 18px;
+      --hero-section-height: 100svh;
+      --intro-scale: 1;
+      --section-padding-bottom: 56px;
+      --section-padding-top: 48px;
+      --section-side: 72px;
+      --top-overscroll-color: #000;
+      --bottom-overscroll-color: #000;
+      --bottom-bar-height: 42px;
+      --section-min-height: 100svh;
+      --stroke-width: 2px;
+      --top-bar-height: 58px;
+      background: var(--top-overscroll-color);
+      color-scheme: light;
+      font-family: "Geo", system-ui, sans-serif;
+      font-synthesis: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    html {
+      background: var(--top-overscroll-color);
+      height: 100%;
+    }
+    html.is-scroll-at-bottom {
+      background: var(--bottom-overscroll-color);
+    }
+    body {
+      background: var(--top-overscroll-color);
+      font-family: inherit;
+      margin: 0;
+      min-height: 100%;
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    html.is-scroll-at-bottom body {
+      background: var(--bottom-overscroll-color);
+    }
+    .intro {
+      background: #000;
+      inset: 0;
+      opacity: 0;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      position: fixed;
+      scrollbar-width: none;
+      touch-action: none;
+      transition: opacity var(--intro-fade, 500ms) ease;
+    }
+    .intro::-webkit-scrollbar {
+      display: none;
+    }
+    body.is-list-ready .intro {
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+      touch-action: pan-y;
+    }
+    body.is-auto-scrolling .intro {
+      touch-action: none;
+    }
+    html.is-scroll-at-bottom .intro {
+      background: var(--bottom-overscroll-color);
+    }
+    .scroll-sheet {
+      background: #fff;
+      min-height: 100%;
+    }
+    .page-section {
+      box-sizing: border-box;
+      min-height: var(--section-min-height);
+    }
+    .content-section {
+      color: #000;
+      min-height: auto;
+      padding:
+        var(--section-padding-top)
+        var(--section-side)
+        var(--section-padding-bottom);
+    }
+    .section-dark.content-section {
+      color: #fff;
+    }
+    .content-section:last-child {
+      padding-bottom:
+        calc(var(--section-padding-bottom) + var(--bottom-bar-height));
+    }
+    .section-content {
+      margin: 0 auto;
+      max-width: 680px;
+    }
+    .section-title {
+      font-size: var(--logo-title-size);
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1;
+      margin: 0 0 36px;
+    }
+    .section-body {
+      font-size: var(--menu-text-size);
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1.1;
+      margin: 0;
+    }
+    .section-body + .section-body {
+      margin-top: 24px;
+    }
+    .section-subtitle {
+      font-size: var(--menu-text-size);
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1;
+      margin: 36px 0 12px;
+    }
+    .hero-section {
+      background: #000;
+      display: grid;
+      min-height: var(--hero-section-height);
+      place-items: center;
+    }
+    .section-light {
+      background: #fff;
+    }
+    .section-dark {
+      background: #000;
+    }
+    .site-bar {
+      align-items: center;
+      box-sizing: border-box;
+      color: #000;
+      display: flex;
+      left: 0;
+      pointer-events: none;
+      position: fixed;
+      right: 0;
+      z-index: 10;
+    }
+    .site-bar-frame {
+      background: #fff;
+      display: flex;
+      inset: 0;
+      overflow: hidden;
+      position: absolute;
+      transition:
+        clip-path var(--chrome-reveal, 700ms)
+        cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 0;
+    }
+    .top-bar .site-bar-frame {
+      align-items: center;
+      border-bottom: var(--stroke-width) solid var(--stroke-color);
+      clip-path: inset(0 0 100% 0);
+      gap: 12px;
+      justify-content: flex-start;
+      padding: 0 var(--chrome-side);
+    }
+    .bottom-bar .site-bar-frame {
+      align-items: center;
+      border-top: var(--stroke-width) solid var(--stroke-color);
+      clip-path: inset(100% 0 0 0);
+      justify-content: flex-end;
+      padding: 0 var(--chrome-side);
+    }
+    .top-bar {
+      height: var(--top-bar-height);
+      top: 0;
+    }
+    .bottom-bar {
+      bottom: 0;
+      font-size: var(--body-size);
+      height: var(--bottom-bar-height);
+      line-height: 1;
+      white-space: nowrap;
+    }
+    body.is-chrome-ready .site-bar-frame {
+      clip-path: inset(0);
+    }
+    body.is-chrome-ready .site-bar {
+      pointer-events: auto;
+    }
+    .menu {
+      height: 100%;
+      position: relative;
+      width: 100%;
+    }
+    .menu-button {
+      align-items: center;
+      background: #fff;
+      border: var(--stroke-width) solid var(--stroke-color);
+      color: #000;
+      box-sizing: border-box;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      height: var(--menu-size);
+      justify-content: center;
+      padding: 0;
+      position: relative;
+      touch-action: manipulation;
+      transition:
+        background 160ms ease,
+        color 160ms ease;
+      width: var(--menu-size);
+      z-index: 1;
+    }
+    .menu-button:focus-visible {
+      background: #000;
+      color: #000;
+      outline: none;
+    }
+    .menu-button:active,
+    .menu.is-open .menu-button {
+      background: #000;
+      color: #000;
+    }
+    .menu-line {
+      background: currentColor;
+      display: block;
+      height: var(--stroke-width);
+      position: relative;
+      transition: background 160ms ease;
+      width: 8px;
+    }
+    .menu-line::after {
+      background: #fff;
+      content: "";
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      transition: width 300ms ease-in;
+      transition-delay: 160ms;
+      width: 0;
+    }
+    .menu-line:nth-child(2)::after {
+      transition-delay: 80ms;
+    }
+    .menu-line:nth-child(3)::after {
+      transition-delay: 0ms;
+    }
+    .menu.is-open .menu-line::after {
+      transition-delay: 0ms;
+      transition-duration: 420ms;
+      transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+      width: 8px;
+    }
+    .menu.is-open .menu-line:nth-child(2)::after {
+      transition-delay: 80ms;
+    }
+    .menu.is-open .menu-line:nth-child(3)::after {
+      transition-delay: 160ms;
+    }
+    .menu-list {
+      box-sizing: border-box;
+      display: grid;
+      left: calc(-2 * var(--stroke-width));
+      margin: 0;
+      min-width: max-content;
+      padding: 0;
+      pointer-events: none;
+      position: fixed;
+      top: calc(var(--top-bar-height) - var(--stroke-width));
+      z-index: 2;
+    }
+    .menu.is-open .menu-list {
+      pointer-events: auto;
+    }
+    .menu.is-dismissing .menu-list {
+      pointer-events: none;
+    }
+    .menu-item {
+      background: transparent;
+      border: var(--stroke-width) solid var(--stroke-color);
+      border-color: transparent;
+      box-sizing: border-box;
+      color: #000;
+      cursor: pointer;
+      display: block;
+      font: inherit;
+      font-size: var(--menu-text-size);
+      font-weight: 400;
+      line-height: 1;
+      margin: 0;
+      overflow: hidden;
+      padding: 14px 0;
+      text-align: left;
+      touch-action: manipulation;
+      transition:
+        background 140ms ease,
+        color 140ms ease,
+        width 300ms ease-in;
+      transition-delay: 0ms, 0ms, 240ms;
+      white-space: nowrap;
+      width: 0;
+    }
+    .menu.is-visible .menu-item {
+      background: #fff;
+      border-color: var(--stroke-color);
+    }
+    .menu.is-open .menu-item {
+      transition-delay: 0ms, 0ms, 0ms;
+      transition-duration: 140ms, 140ms, 420ms;
+      transition-timing-function:
+        ease,
+        ease,
+        cubic-bezier(0.2, 0.8, 0.2, 1);
+      width: var(--menu-width);
+    }
+    .menu.is-open .menu-item:nth-child(2) {
+      transition-delay: 0ms, 0ms, 80ms;
+    }
+    .menu.is-open .menu-item:nth-child(3) {
+      transition-delay: 0ms, 0ms, 160ms;
+    }
+    .menu.is-open .menu-item:nth-child(4) {
+      transition-delay: 0ms, 0ms, 240ms;
+    }
+    .menu-item:nth-child(2) {
+      transition-delay: 0ms, 0ms, 160ms;
+    }
+    .menu-item:nth-child(3) {
+      transition-delay: 0ms, 0ms, 80ms;
+    }
+    .menu-item:nth-child(4) {
+      transition-delay: 0ms, 0ms, 0ms;
+    }
+    .menu-item + .menu-item {
+      margin-top: calc(-1 * var(--stroke-width));
+    }
+    .menu.is-visible .menu-item:focus-visible {
+      background: #000;
+      color: #fff;
+      outline: none;
+    }
+    .menu.is-visible .menu-item:active,
+    .menu.is-visible .menu-item.is-pressing {
+      background: #000;
+      color: #fff;
+    }
+    .menu.is-visible.is-dismissing .menu-item,
+    .menu.is-visible.is-dismissing .menu-item:focus-visible,
+    .menu.is-visible.is-dismissing .menu-item:active {
+      background: #fff;
+      color: #000;
+    }
+    .menu.is-visible.is-dismissing .menu-item.is-pressing {
+      background: #000;
+      color: #fff;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .menu-button:hover {
+        background: #000;
+        color: #000;
+        outline: none;
+      }
+      .menu.is-visible .menu-item:hover {
+        background: #000;
+        color: #fff;
+        outline: none;
+      }
+      .menu.is-visible.is-dismissing .menu-item:hover {
+        background: #fff;
+        color: #000;
+      }
+    }
+    .menu-item-label {
+      display: block;
+      padding: 0 32px 0 20px;
+    }
+    .site-title {
+      font-size: var(--header-title-size);
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1;
+      margin: 0;
+      white-space: nowrap;
+    }
+    body.is-intro-ready .intro {
+      opacity: 1;
+    }
+    .brand {
+      height: 260px;
+      position: relative;
+      transform: scale(var(--intro-scale));
+      width: 390px;
+    }
+    .brand-mark,
+    .brand-name {
+      left: 50%;
+      opacity: 0;
+      position: absolute;
+      transform: translate(-50%, -50%);
+    }
+    .brand-mark {
+      height: 160px;
+      top: 94px;
+      -webkit-user-drag: none;
+      width: 147.43px;
+    }
+    .brand-name {
+      color: #fff;
+      font-size: var(--logo-title-size);
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1;
+      margin: 0;
+      top: 212px;
+      white-space: nowrap;
+    }
+    @media (max-width: 480px) {
+      :root {
+        --body-size: 12px;
+        --chrome-side: 12px;
+        --header-title-size: 26px;
+        --logo-title-size: 32px;
+        --menu-text-size: 19px;
+        --menu-size: 18px;
+        --section-side: var(--chrome-side);
+        --top-bar-height: 54px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="intro" aria-label="NT INTERACTIVE">
+    <div class="scroll-sheet">
+      <section class="page-section hero-section" aria-label="NT INTERACTIVE">
+        <div class="brand">
+          <img
+            class="brand-mark"
+            src="assets/logo/logo00.png"
+            alt=""
+            width="258"
+            height="280"
+          >
+          <h1 class="brand-name">NT INTERACTIVE</h1>
+        </div>
+      </section>
+      <section
+        class="page-section content-section section-light"
+        id="studio-profile"
+        aria-label="Studio Profile"
+      >
+        <div class="section-content">
+          <h2 class="section-title">Studio Profile</h2>
+          <p class="section-body">
+            NT INTERACTIVE is an independent iOS game studio founded in █████,
+            ████, by ████ ████ and ███ █████ after several private prototypes
+            developed between █████ and █████. The studio is based in █████,
+            with a small team of █ designers, █ engineers, █ artists, and
+            █ sound collaborators working around touch, timing, silence, and
+            readable systems.
+          </p>
+          <p class="section-body">
+            Team records describe backgrounds in █████, interactive media,
+            architecture, music, █████, and software tools built for personal
+            use. Member notes mention a childhood room in █████, a graduation
+            project about █████, a family archive of ████ photographs, and a
+            habit of rebuilding the same gesture until it becomes invisible.
+            Most names, dates, schools, locations, hobbies, and personal
+            histories remain █████████.
+          </p>
+          <p class="section-body">
+            The studio develops █████ before products: rooms that remember
+            touch, rules that reveal themselves through ████, and small worlds
+            with clean surfaces over █████ machinery. Internal notes reduce the
+            method to ███ words: make the system clear, make the feeling exact,
+            remove █████████ that speaks too loudly.
+          </p>
+        </div>
+      </section>
+      <section
+        class="page-section content-section section-dark"
+        id="game-portfolio"
+        aria-label="Game Portfolio"
+      >
+        <div class="section-content">
+          <h2 class="section-title">Game Portfolio</h2>
+          <p class="section-body">
+            NT INTERACTIVE develops iOS games built for precise touch, clear
+            rules, strong visual identity, and quiet depth. Each title begins
+            with a compact concept and is shaped through disciplined craft until
+            the interaction feels immediate, polished, and exact.
+          </p>
+        </div>
+      </section>
+      <section
+        class="page-section content-section section-light"
+        id="privacy-policy"
+        aria-label="Privacy Policy"
+      >
+        <div class="section-content">
+          <h2 class="section-title">Privacy Policy</h2>
+          <h3 class="section-subtitle">Overview</h3>
+          <p class="section-body">
+            This privacy policy describes how NT INTERACTIVE handles information
+            in connection with this website and our games. Our games operate
+            without studio accounts, player profiles, advertising trackers,
+            analytics services, or NT INTERACTIVE gameplay servers.
+          </p>
+          <h3 class="section-subtitle">Information We Do Not Collect</h3>
+          <p class="section-body">
+            NT INTERACTIVE does not collect personal information from players or
+            website visitors. We do not ask for accounts, profiles, or personal
+            information through this website.
+          </p>
+          <h3 class="section-subtitle">Website Operation</h3>
+          <p class="section-body">
+            Ordinary technical records may be generated when this website is
+            accessed, including internet protocol address, browser type, device
+            information, pages requested, referring page, and date and time of
+            access. These records are used for hosting, security, diagnostics,
+            maintenance, and basic website operation.
+          </p>
+          <h3 class="section-subtitle">Apple Services</h3>
+          <p class="section-body">
+            Apple provides services such as App Store distribution, iCloud,
+            in-app purchases, and Game Center under its own privacy policy,
+            account settings, and platform terms. NT INTERACTIVE does not
+            receive Apple account credentials or payment details.
+          </p>
+          <h3 class="section-subtitle">Sharing and Sale</h3>
+          <p class="section-body">
+            NT INTERACTIVE does not sell personal information or share personal
+            information for advertising or cross-site tracking.
+          </p>
+          <h3 class="section-subtitle">Children's Privacy</h3>
+          <p class="section-body">
+            Our games and website are not designed to knowingly collect
+            personal information from children. If you believe a child has
+            provided personal information to NT INTERACTIVE, please contact us
+            through the support information listed on the relevant store page.
+          </p>
+          <h3 class="section-subtitle">Changes to This Policy</h3>
+          <p class="section-body">
+            NT INTERACTIVE may update this policy to reflect changes in our
+            website, games, operations, or legal requirements. Updated versions
+            will be posted on this page.
+          </p>
+          <h3 class="section-subtitle">Contact</h3>
+          <p class="section-body">
+            For privacy questions about an NT INTERACTIVE game, use the support
+            information listed on the game's store page.
+          </p>
+          <h3 class="section-subtitle">Policy Status</h3>
+          <p class="section-body">
+            This policy is effective as of July 10, 2026, and applies to the
+            website and game data practices of NT INTERACTIVE.
+          </p>
+        </div>
+      </section>
+      <section
+        class="page-section content-section section-dark"
+        id="disclaimer"
+        aria-label="Disclaimer"
+      >
+        <div class="section-content">
+          <h2 class="section-title">Disclaimer</h2>
+          <h3 class="section-subtitle">Official Source</h3>
+          <p class="section-body">
+            The App Store page that links to this website is the official source
+            for an NT INTERACTIVE game. Copied pages, altered listings, and
+            unofficial downloads are not authentic.
+          </p>
+          <h3 class="section-subtitle">Social Media</h3>
+          <p class="section-body">
+            NT INTERACTIVE does not operate social media accounts. Accounts,
+            messages, promotions, or pages claiming to represent NT INTERACTIVE
+            on social media are not authentic.
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+  <header class="site-bar top-bar" aria-label="Site navigation">
+    <nav class="menu" aria-label="Primary">
+      <div class="site-bar-frame">
+        <button
+          class="menu-button"
+          type="button"
+          aria-label="Menu"
+          aria-expanded="false"
+          aria-controls="menu-list"
+        >
+          <span class="menu-line" aria-hidden="true"></span>
+          <span class="menu-line" aria-hidden="true"></span>
+          <span class="menu-line" aria-hidden="true"></span>
+        </button>
+        <p class="site-title">NT INTERACTIVE</p>
+      </div>
+      <div class="menu-list" id="menu-list" aria-hidden="true" inert>
+        <button class="menu-item" type="button" data-target="studio-profile">
+          <span class="menu-item-label">Studio Profile</span>
+        </button>
+        <button class="menu-item" type="button" data-target="game-portfolio">
+          <span class="menu-item-label">Game Portfolio</span>
+        </button>
+        <button class="menu-item" type="button" data-target="privacy-policy">
+          <span class="menu-item-label">Privacy Policy</span>
+        </button>
+        <button class="menu-item" type="button" data-target="disclaimer">
+          <span class="menu-item-label">Disclaimer</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+  <footer class="site-bar bottom-bar">
+    <div class="site-bar-frame">
+      <span>[c] 2026 NT INTERACTIVE. All rights reserved.</span>
+    </div>
+  </footer>
+  <script>
+    const metrics = {
+      designHeight: 260,
+      designWidth: 390,
+      heightRatio: 0.48,
+      maxScale: 1.4,
+      widthRatio: 0.95
+    };
+    const sequence = {
+      count: 30,
+      fps: 60,
+      prefix: "assets/logo/logo"
+    };
+    const readParentValue = (key, fallback) => {
+      try {
+        return window.parent[key] || fallback;
+      } catch {
+        return fallback;
+      }
+    };
+    const shellTiming = readParentValue("ntShellTiming", {});
+    const timing = {
+      blackFade: shellTiming.blackFade || 500,
+      blackHold: shellTiming.blackHold || 500,
+      chromeDelay: 2000,
+      chromeReveal: 700,
+      textReveal: 0.5,
+      whiteHold: shellTiming.whiteHold || 500
+    };
+    const introSurfaceDelay = timing.whiteHold + timing.blackFade;
+    const pageStartedAt = readParentValue("ntStartedAt", Date.now());
+    const root = document.documentElement;
+    const scrollPort = document.querySelector(".intro");
+    const brandMark = document.querySelector(".brand-mark");
+    const brandName = document.querySelector(".brand-name");
+    const menu = document.querySelector(".menu");
+    const menuButton = document.querySelector(".menu-button");
+    const menuList = document.querySelector(".menu-list");
+    const menuLabels = document.querySelectorAll(".menu-item-label");
+    const menuItems = document.querySelectorAll(".menu-item");
+    const menuCloseDuration = 620;
+    const menuReturnDuration = 140;
+    const revealDuration = sequence.count / sequence.fps;
+    let isAutoScrolling = false;
+    let isListReady = false;
+    let menuCloseTimeout;
+    let menuDismissTimeout;
+    let menuPressTimeout;
+    let scrollFrame;
+    const frameUrls = Array.from({ length: sequence.count }, (_item, frame) => {
+      const suffix = String(frame).padStart(2, "0");
+      return `${sequence.prefix}${suffix}.png`;
+    });
+    const delay = (duration) => {
+      return new Promise((resolve) => window.setTimeout(resolve, duration));
+    };
+    const settle = async () => {
+      await delay(1000 / sequence.fps);
+      await delay(1000 / sequence.fps);
+    };
+    const waitForIntroWindow = async () => {
+      const elapsed = Date.now() - pageStartedAt;
+      await delay(Math.max(0, introSurfaceDelay - elapsed));
+    };
+    const requestTick = (callback) => {
+      if (window.requestAnimationFrame) {
+        window.requestAnimationFrame(callback);
+        return;
+      }
+      window.setTimeout(callback, 1000 / sequence.fps);
+    };
+    const easeOut = (value) => {
+      const inverse = 1 - value;
+      return 1 - inverse * inverse * inverse;
+    };
+    const easeInOut = (value) => {
+      if (value < 0.5) {
+        return 4 * value * value * value;
+      }
+      return 1 - Math.pow(-2 * value + 2, 3) / 2;
+    };
+    const progress = (elapsed, duration) => {
+      return Math.min(1, Math.max(0, elapsed / duration));
+    };
+    const clamp = (value, minimum, maximum) => {
+      return Math.min(maximum, Math.max(minimum, value));
+    };
+    const loadImage = (src) => {
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.onload = async () => {
+          if (image.decode) {
+            await image.decode().catch(() => {});
+          }
+          resolve(image);
+        };
+        image.onerror = () => resolve(image);
+        image.src = src;
+      });
+    };
+    const showBrand = (images, frame, markOpacity, nameOpacity) => {
+      brandMark.src = images[frame].src;
+      brandMark.style.opacity = markOpacity;
+      brandName.style.opacity = nameOpacity;
+    };
+    const setMenuItemsFocusable = (isFocusable) => {
+      menuItems.forEach((item) => {
+        item.tabIndex = isFocusable ? 0 : -1;
+      });
+    };
+    const setMenuListAccessible = (isAccessible) => {
+      menuList.inert = !isAccessible;
+      menuList.setAttribute("aria-hidden", String(!isAccessible));
+    };
+    const setMenuOpen = (isOpen) => {
+      window.clearTimeout(menuCloseTimeout);
+      window.clearTimeout(menuDismissTimeout);
+      if (isOpen) {
+        menu.classList.remove("is-dismissing");
+        setMenuListAccessible(true);
+        menu.classList.add("is-visible");
+      }
+      menu.classList.toggle("is-open", isOpen);
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      setMenuItemsFocusable(isOpen);
+      if (!isOpen) {
+        setMenuListAccessible(false);
+        window.clearTimeout(menuPressTimeout);
+        menuItems.forEach((item) => {
+          item.classList.remove("is-pressing");
+        });
+        menuCloseTimeout = window.setTimeout(() => {
+          menu.classList.remove("is-dismissing");
+          menu.classList.remove("is-visible");
+        }, menuCloseDuration);
+      }
+    };
+    const dismissMenuFromItem = () => {
+      if (!menu.classList.contains("is-open")) {
+        return;
+      }
+      if (menu.classList.contains("is-dismissing")) {
+        return;
+      }
+      menu.classList.add("is-dismissing");
+      menuDismissTimeout = window.setTimeout(() => {
+        setMenuOpen(false);
+        menuButton.blur();
+      }, menuReturnDuration);
+    };
+    const toggleMenu = () => {
+      if (menu.classList.contains("is-dismissing")) {
+        return;
+      }
+      setMenuOpen(!menu.classList.contains("is-open"));
+    };
+    const setPressedItem = (pressedItem) => {
+      window.clearTimeout(menuPressTimeout);
+      menuItems.forEach((item) => {
+        item.classList.toggle("is-pressing", item === pressedItem);
+      });
+    };
+    const releasePressedItem = () => {
+      window.clearTimeout(menuPressTimeout);
+      menuPressTimeout = window.setTimeout(() => {
+        menuItems.forEach((item) => {
+          item.classList.remove("is-pressing");
+        });
+      }, menuReturnDuration);
+    };
+    const getTopBarHeight = () => {
+      return parseFloat(
+        getComputedStyle(root).getPropertyValue("--top-bar-height")
+      );
+    };
+    const getMaxScroll = () => {
+      return Math.max(0, scrollPort.scrollHeight - scrollPort.clientHeight);
+    };
+    const updateScrollSurface = () => {
+      const maxScroll = getMaxScroll();
+      const isAtBottom = scrollPort.scrollTop >= maxScroll - 1;
+      root.classList.toggle("is-scroll-at-bottom", isAtBottom);
+    };
+    const setAutoScrolling = (isScrolling) => {
+      isAutoScrolling = isScrolling;
+      document.body.classList.toggle("is-auto-scrolling", isScrolling);
+    };
+    const finishAutoScroll = (target) => {
+      scrollPort.scrollTop = target;
+      setAutoScrolling(false);
+      updateScrollSurface();
+    };
+    const animateScrollTo = (target) => {
+      window.cancelAnimationFrame(scrollFrame);
+      const start = scrollPort.scrollTop;
+      const distance = target - start;
+      if (Math.abs(distance) < 1) {
+        finishAutoScroll(target);
+        return;
+      }
+      const duration = clamp(Math.abs(distance) * 0.45, 420, 900);
+      const startedAt = performance.now();
+      setAutoScrolling(true);
+      const tick = (now) => {
+        const amount = easeInOut(progress(now - startedAt, duration));
+        scrollPort.scrollTop = start + distance * amount;
+        updateScrollSurface();
+        if (amount < 1) {
+          scrollFrame = window.requestAnimationFrame(tick);
+          return;
+        }
+        finishAutoScroll(target);
+      };
+      scrollFrame = window.requestAnimationFrame(tick);
+    };
+    const scrollToSection = (targetId) => {
+      if (!isListReady) {
+        return;
+      }
+      const target = document.getElementById(targetId);
+      if (!target) {
+        return;
+      }
+      const maxScroll = getMaxScroll();
+      const top = clamp(target.offsetTop - getTopBarHeight(), 0, maxScroll);
+      animateScrollTo(top);
+    };
+    const shouldBlockScroll = () => {
+      return !isListReady || isAutoScrolling;
+    };
+    const blockScrollWhenLocked = (event) => {
+      if (shouldBlockScroll()) {
+        event.preventDefault();
+      }
+    };
+    const enableList = () => {
+      isListReady = true;
+      document.body.classList.add("is-list-ready");
+      updateScrollSurface();
+    };
+    const updateScale = () => {
+      const widthScale = window.innerWidth * metrics.widthRatio;
+      const heightScale = window.innerHeight * metrics.heightRatio;
+      const scale = Math.min(
+        metrics.maxScale,
+        widthScale / metrics.designWidth,
+        heightScale / metrics.designHeight
+      );
+      root.style.setProperty("--intro-scale", scale);
+    };
+    const updateMenuWidth = () => {
+      const border = parseFloat(
+        getComputedStyle(root).getPropertyValue("--stroke-width")
+      );
+      const widths = Array.from(menuLabels, (label) => label.scrollWidth);
+      const width = Math.ceil(Math.max(...widths) + border * 2 + 18);
+      root.style.setProperty("--menu-width", `${width}px`);
+    };
+    const updateLayout = () => {
+      updateScale();
+      updateMenuWidth();
+      updateScrollSurface();
+    };
+    const playIntro = (images) => {
+      return new Promise((resolve) => {
+        const startedAt = Date.now();
+        const tick = () => {
+          const elapsed = (Date.now() - startedAt) / 1000;
+          const finalFrame = sequence.count - 1;
+          if (elapsed < revealDuration) {
+            const frame = Math.min(
+              finalFrame,
+              Math.floor(elapsed * sequence.fps)
+            );
+            showBrand(
+              images,
+              frame,
+              easeOut(progress(elapsed, revealDuration)),
+              0
+            );
+            requestTick(tick);
+            return;
+          }
+          if (elapsed < revealDuration + timing.textReveal) {
+            const textElapsed = elapsed - revealDuration;
+            showBrand(
+              images,
+              finalFrame,
+              1,
+              easeOut(progress(textElapsed, timing.textReveal))
+            );
+            requestTick(tick);
+            return;
+          }
+          showBrand(images, finalFrame, 1, 1);
+          resolve();
+        };
+        requestTick(tick);
+      });
+    };
+    const readyFont = () => {
+      if (!document.fonts) {
+        return Promise.resolve();
+      }
+      return document.fonts.load('32px "Geo"', "NT INTERACTIVE")
+        .catch(() => {});
+    };
+    const bindMenu = () => {
+      menuButton.addEventListener("click", toggleMenu);
+      menuItems.forEach((item) => {
+        item.addEventListener("pointerdown", () => {
+          setPressedItem(item);
+        });
+        item.addEventListener("pointercancel", releasePressedItem);
+        item.addEventListener("pointerleave", releasePressedItem);
+        item.addEventListener("pointerup", releasePressedItem);
+        item.addEventListener("click", () => {
+          dismissMenuFromItem();
+          scrollToSection(item.dataset.target);
+        });
+      });
+      document.addEventListener("click", (event) => {
+        if (!menu.contains(event.target)) {
+          setMenuOpen(false);
+        }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          setMenuOpen(false);
+          menuButton.focus();
+        }
+      });
+    };
+    const start = async () => {
+      menuButton.tabIndex = -1;
+      updateLayout();
+      root.style.setProperty("--intro-fade", `${timing.blackFade}ms`);
+      root.style.setProperty("--chrome-reveal", `${timing.chromeReveal}ms`);
+      const images = await Promise.all(frameUrls.map(loadImage));
+      await readyFont();
+      updateMenuWidth();
+      await settle();
+      await waitForIntroWindow();
+      document.body.classList.add("is-intro-ready");
+      await delay(timing.blackHold);
+      await playIntro(images);
+      await delay(timing.chromeDelay);
+      menuButton.tabIndex = 0;
+      document.body.classList.add("is-chrome-ready");
+      enableList();
+    };
+    window.addEventListener("resize", updateLayout);
+    window.addEventListener("wheel", blockScrollWhenLocked, {
+      passive: false
+    });
+    window.addEventListener("touchmove", blockScrollWhenLocked, {
+      passive: false
+    });
+    window.addEventListener("gesturestart", (event) => {
+      event.preventDefault();
+    });
+    scrollPort.addEventListener("scroll", updateScrollSurface);
+    setMenuListAccessible(false);
+    setMenuItemsFocusable(false);
+    bindMenu();
+    start();
+  </script>
+</body>
+</html>
